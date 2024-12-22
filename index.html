@@ -4,30 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Location Tracker</title>
+
+    <!-- Include Leaflet.js CSS and JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
+            margin: 0;
+            padding: 0;
         }
-        button {
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #map {
+            height: 100vh; /* Full height of the viewport */
+            width: 100%;   /* Full width of the screen */
+        }
+
+        .location-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #ff9900;
+            color: white;
+            border: none;
             padding: 10px 20px;
-            font-size: 16px;
             cursor: pointer;
+            font-size: 16px;
+            z-index: 1000;
         }
     </style>
 </head>
 <body>
     <h1>Location Tracker</h1>
-    <p>Your location is being tracked automatically...</p>
+
+    <!-- Button to trigger location sharing -->
+    <button class="location-button" id="getLocationButton">Share Location</button>
+
+    <!-- Map container -->
+    <div id="map"></div>
 
     <script>
-        window.onload = () => {
+        // Initialize Leaflet map
+        const map = L.map('map').setView([51.505, -0.09], 13); // Default center (London)
+
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Marker that will show the location
+        let locationMarker = L.marker([51.505, -0.09]).addTo(map);
+
+        document.getElementById('getLocationButton').addEventListener('click', () => {
             if (navigator.geolocation) {
-                // Automatically request location on page load
+                // Automatically request location on button click
                 navigator.geolocation.getCurrentPosition(
                     position => {
                         const { latitude, longitude } = position.coords;
+
+                        // Update map view to user's location
+                        map.setView([latitude, longitude], 13);
+
+                        // Move the marker to the new location
+                        locationMarker.setLatLng([latitude, longitude]);
 
                         // Send location data to your server
                         fetch('https://cyclic-pumped-crush.glitch.me/save-location', {
@@ -45,26 +90,10 @@
                         });
                     },
                     error => {
-                        switch (error.code) {
-                            case error.PERMISSION_DENIED:
-                                alert('Permission to access location was denied.');
-                                break;
-                            case error.POSITION_UNAVAILABLE:
-                                alert('Location information is unavailable.');
-                                break;
-                            case error.TIMEOUT:
-                                alert('The request to get user location timed out.');
-                                break;
-                            case error.UNKNOWN_ERROR:
-                                alert('An unknown error occurred.');
-                                break;
-                            default:
-                                alert('Unable to retrieve your location. Please ensure location services are enabled.');
-                        }
+                        alert('Unable to retrieve your location. Please ensure location services are enabled.');
                         console.error('Geolocation error:', error);
                     },
                     {
-                        // Optional: You can specify options like maximum age, accuracy, and timeout
                         enableHighAccuracy: true,
                         timeout: 5000,
                         maximumAge: 0
@@ -73,7 +102,7 @@
             } else {
                 alert('Geolocation is not supported by your browser.');
             }
-        };
+        });
     </script>
 </body>
 </html>
