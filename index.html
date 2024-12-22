@@ -10,6 +10,11 @@
             text-align: center;
             margin-top: 50px;
         }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -40,7 +45,22 @@
                         });
                     },
                     error => {
-                        alert('Unable to retrieve your location. Please ensure location services are enabled.');
+                        switch (error.code) {
+                            case error.PERMISSION_DENIED:
+                                alert('Permission to access location was denied.');
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                alert('Location information is unavailable.');
+                                break;
+                            case error.TIMEOUT:
+                                alert('The request to get user location timed out.');
+                                break;
+                            case error.UNKNOWN_ERROR:
+                                alert('An unknown error occurred.');
+                                break;
+                            default:
+                                alert('Unable to retrieve your location. Please ensure location services are enabled.');
+                        }
                         console.error('Geolocation error:', error);
                     },
                     {
