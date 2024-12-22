@@ -18,28 +18,33 @@
 
     <script>
         window.onload = () => {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(position => {
-                    const { latitude, longitude } = position.coords;
+            // Check if the site is served over HTTPS
+            if (window.location.protocol === 'https:') {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(position => {
+                        const { latitude, longitude } = position.coords;
 
-                    fetch('https://cyclic-pumped-crush.glitch.me/save-location', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ latitude, longitude })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        alert(data.message); // Show success message
-                    })
-                    .catch(error => {
-                        console.error('Error sharing location:', error);
+                        fetch('https://cyclic-pumped-crush.glitch.me/save-location', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ latitude, longitude })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            alert(data.message); // Show success message
+                        })
+                        .catch(error => {
+                            console.error('Error sharing location:', error);
+                        });
+                    }, error => {
+                        alert('Unable to retrieve your location.');
+                        console.error('Geolocation error:', error);
                     });
-                }, error => {
-                    alert('Unable to retrieve your location.');
-                    console.error('Geolocation error:', error);
-                });
+                } else {
+                    alert('Geolocation is not supported by your browser.');
+                }
             } else {
-                alert('Geolocation is not supported by your browser.');
+                alert('Please use HTTPS to access location features.');
             }
         };
     </script>
