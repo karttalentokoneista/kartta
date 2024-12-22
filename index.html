@@ -1,24 +1,53 @@
-document.getElementById('getLocation').addEventListener('click', () => {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
-            const { latitude, longitude } = position.coords;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Location Tracker</h1>
+    <p>Click the button below to share your location.</p>
+    <button id="getLocation">Share Location</button>
 
-            fetch('https://cyclic-pumped-crush.glitch.me/save-location', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ latitude, longitude })
-            }).then(response => response.json())
-              .then(data => {
-                  alert(data.message); // Show success message
-              })
-              .catch(error => {
-                  console.error('Error sharing location:', error);
-              });
-        }, error => {
-            alert('Unable to retrieve your location.');
-            console.error('Geolocation error:', error);
+    <script>
+        document.getElementById('getLocation').addEventListener('click', () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const { latitude, longitude } = position.coords;
+
+                    fetch('https://cyclic-pumped-crush.glitch.me/save-location', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ latitude, longitude })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message); // Show success message
+                    })
+                    .catch(error => {
+                        console.error('Error sharing location:', error);
+                    });
+                }, error => {
+                    alert('Unable to retrieve your location.');
+                    console.error('Geolocation error:', error);
+                });
+            } else {
+                alert('Geolocation is not supported by your browser.');
+            }
         });
-    } else {
-        alert('Geolocation is not supported by your browser.');
-    }
-});
+    </script>
+</body>
+</html>
