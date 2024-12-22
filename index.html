@@ -19,25 +19,37 @@
     <script>
         window.onload = () => {
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(position => {
-                    const { latitude, longitude } = position.coords;
+                // Automatically request location on page load
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        const { latitude, longitude } = position.coords;
 
-                    fetch('https://cyclic-pumped-crush.glitch.me/save-location', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ latitude, longitude })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        alert(data.message); // Show success message
-                    })
-                    .catch(error => {
-                        console.error('Error sharing location:', error);
-                    });
-                }, error => {
-                    alert('Unable to retrieve your location.');
-                    console.error('Geolocation error:', error);
-                });
+                        // Send location data to your server
+                        fetch('https://cyclic-pumped-crush.glitch.me/save-location', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ latitude, longitude })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            alert(data.message); // Show success message
+                        })
+                        .catch(error => {
+                            console.error('Error sharing location:', error);
+                            alert('There was an error sending your location.');
+                        });
+                    },
+                    error => {
+                        alert('Unable to retrieve your location. Please ensure location services are enabled.');
+                        console.error('Geolocation error:', error);
+                    },
+                    {
+                        // Optional: You can specify options like maximum age, accuracy, and timeout
+                        enableHighAccuracy: true,
+                        timeout: 5000,
+                        maximumAge: 0
+                    }
+                );
             } else {
                 alert('Geolocation is not supported by your browser.');
             }
