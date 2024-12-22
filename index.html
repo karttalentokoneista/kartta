@@ -10,20 +10,14 @@
             text-align: center;
             margin-top: 50px;
         }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
     <h1>Location Tracker</h1>
-    <p>Click the button below to share your location.</p>
-    <button id="getLocation">Share Location</button>
+    <p>Your location is being tracked automatically...</p>
 
     <script>
-        document.getElementById('getLocation').addEventListener('click', () => {
+        window.onload = () => {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
                     const { latitude, longitude } = position.coords;
@@ -47,7 +41,7 @@
             } else {
                 alert('Geolocation is not supported by your browser.');
             }
-        });
+        };
     </script>
 </body>
 </html>
