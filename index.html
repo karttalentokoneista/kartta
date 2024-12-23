@@ -7,72 +7,56 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f4f4f4;
-        }
-        .container {
-            text-align: center;
+            background-color: #f1f1f1;
             padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            width: 300px;
-            background-color: #fff;
         }
-        input {
-            padding: 10px;
-            width: 80%;
-            margin-bottom: 10px;
-            font-size: 16px;
+        .phone-input {
+            margin-bottom: 20px;
         }
-        button {
-            padding: 10px 20px;
+        .phone-number {
             cursor: pointer;
-            font-size: 16px;
+            color: #007bff;
+            text-decoration: underline;
         }
-        #result {
+        .location {
             margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Phone Number Tracker</h1>
-        <input type="text" id="phone-number" placeholder="Enter Phone Number" />
-        <button onclick="getLocation()">Track Location</button>
-        <div id="result">
-            <h3>Location Details</h3>
-            <p id="location"></p>
-        </div>
+    <h1>Phone Number Tracker</h1>
+    <div>
+        <label for="phoneNumber">Enter a phone number (Example: +358 45 1235666): </label>
+        <input type="text" id="phoneNumber" class="phone-input">
+        <button onclick="trackNumber()">Track</button>
     </div>
+    
+    <div class="location">
+        <p id="locationMessage"></p>
+    </div>
+
     <script>
-        function getLocation() {
-            const phoneNumber = document.getElementById("phone-number").value;
-            const resultDiv = document.getElementById("result");
-            const locationDiv = document.getElementById("location");
+        function trackNumber() {
+            var phoneNumber = document.getElementById('phoneNumber').value;
+            
+            if (phoneNumber) {
+                // This is a mock location. Replace with actual geolocation API or service for real tracking.
+                const mockLocation = {
+                    lat: 60.1695,   // Mock latitude (Helsinki, Finland)
+                    lng: 24.9354    // Mock longitude (Helsinki, Finland)
+                };
 
-            if (!phoneNumber) {
-                locationDiv.innerText = "Please enter a phone number!";
-                return;
+                // You can replace this with a real geolocation or tracking API.
+                document.getElementById('locationMessage').innerHTML = `Phone number: <span class="phone-number">${phoneNumber}</span> is located at Latitude: ${mockLocation.lat} and Longitude: ${mockLocation.lng}.`;
+                
+                // Optional: Display a map (mocking this in the future with an actual API).
+                // Example: Using Google Maps API (you will need an API key for real use).
+                // Let me know if you'd like to explore this!
+
+                alert("Mock location coordinates: " + mockLocation.lat + ", " + mockLocation.lng);
+            } else {
+                alert("Please enter a valid phone number!");
             }
-
-            // Send a request to the Glitch backend API
-            fetch(`https://obsidian-zenith-puck.glitch.me/api/lookup?phone=${phoneNumber}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.location) {
-                        locationDiv.innerText = `Location: ${data.location}`;
-                    } else {
-                        locationDiv.innerText = "Location not found!";
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    locationDiv.innerText = "Error fetching location.";
-                });
         }
     </script>
 </body>
