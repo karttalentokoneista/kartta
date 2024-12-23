@@ -3,59 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phone Location Tracker</title>
+    <title>Phone Number Tracker</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             margin: 0;
-            padding: 20px;
-            text-align: center;
+            background-color: #f4f4f4;
         }
-        input, button {
+        .container {
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            width: 300px;
+            background-color: #fff;
+        }
+        input {
             padding: 10px;
-            margin: 10px;
-            font-size: 1em;
+            width: 80%;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #result {
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Phone Location Tracker</h1>
-    <p>Enter your phone number and share your location.</p>
-    <form id="location-form">
-        <input type="text" id="phone" placeholder="Phone Number" required />
-        <button type="button" onclick="shareLocation()">Share Location</button>
-    </form>
-    <div id="output"></div>
-
+    <div class="container">
+        <h1>Phone Number Tracker</h1>
+        <input type="text" id="phone-number" placeholder="Enter Phone Number" />
+        <button onclick="getLocation()">Track Location</button>
+        <div id="result">
+            <h3>Location Details</h3>
+            <p id="location"></p>
+        </div>
+    </div>
     <script>
-        async function shareLocation() {
-            const phone = document.getElementById('phone').value;
+        function getLocation() {
+            const phoneNumber = document.getElementById("phone-number").value;
+            const resultDiv = document.getElementById("result");
+            const locationDiv = document.getElementById("location");
 
-            if (!phone) {
-                alert("Please enter your phone number.");
+            if (!phoneNumber) {
+                locationDiv.innerText = "Please enter a phone number!";
                 return;
             }
 
-            if (!navigator.geolocation) {
-                alert("Geolocation is not supported by your browser.");
-                return;
-            }
-
-            navigator.geolocation.getCurrentPosition(async (position) => {
-                const location = {
-                    lat: position.coords.latitude,
-                    lon: position.coords.longitude,
-                };
-
-                const response = await fetch('/share-location', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ phone, location }),
+            // Send a request to the Glitch backend API
+            fetch(`https://your-glitch-app-name.glitch.me/api/lookup?phone=${phoneNumber}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.location) {
+                        locationDiv.innerText = `Location: ${data.location}`;
+                    } else {
+                        locationDiv.innerText = "Location not found!";
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    locationDiv.innerText = "Error fetching location.";
                 });
-
-                const result = await response.json();
-                document.getElementById('output').innerHTML = `<p>${result.message}</p>`;
-            });
         }
     </script>
 </body>
