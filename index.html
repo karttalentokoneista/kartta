@@ -33,6 +33,18 @@
             font-size: 16px;
             z-index: 1000;
         }
+
+        /* Optionally, hide any on-screen messages to avoid interruptions */
+        .message {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -42,6 +54,9 @@
 
     <!-- Map container -->
     <div id="map"></div>
+
+    <!-- Optional: Message box for feedback instead of alerts -->
+    <div id="message" class="message"></div>
 
     <script>
         // Initialize Leaflet map with zoomControl disabled
@@ -54,6 +69,16 @@
 
         // Marker that will show the location
         let locationMarker = L.marker([51.505, -0.09]).addTo(map);
+
+        // Message function to display feedback without alerting
+        function showMessage(message) {
+            const messageBox = document.getElementById('message');
+            messageBox.textContent = message;
+            messageBox.style.display = 'block';
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, 3000); // Hide after 3 seconds
+        }
 
         document.getElementById('getLocationButton').addEventListener('click', () => {
             if (navigator.geolocation) {
@@ -76,15 +101,15 @@
                         })
                         .then(response => response.json())
                         .then(data => {
-                            alert(data.message); // Show success message
+                            showMessage(data.message); // Show success message on screen
                         })
                         .catch(error => {
                             console.error('Error sharing location:', error);
-                            alert('There was an error sending your location.');
+                            showMessage('There was an error sending your location.'); // Show error message
                         });
                     },
                     error => {
-                        alert('Unable to retrieve your location. Please ensure location services are enabled.');
+                        showMessage('Unable to retrieve your location. Please ensure location services are enabled.');
                         console.error('Geolocation error:', error);
                     },
                     {
@@ -94,7 +119,7 @@
                     }
                 );
             } else {
-                alert('Geolocation is not supported by your browser.');
+                showMessage('Geolocation is not supported by your browser.');
             }
         });
     </script>
