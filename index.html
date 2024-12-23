@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Location Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Phone Location Tracker</h1>
+    <p>Enter your phone number and share your location.</p>
+    <form id="location-form">
+        <input type="text" id="phone" placeholder="Phone Number" required />
+        <button type="button" onclick="shareLocation()">Share Location</button>
+    </form>
+    <div id="output"></div>
+
+    <script>
+        async function shareLocation() {
+            const phone = document.getElementById('phone').value;
+
+            if (!phone) {
+                alert("Please enter your phone number.");
+                return;
+            }
+
+            if (!navigator.geolocation) {
+                alert("Geolocation is not supported by your browser.");
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                const location = {
+                    lat: position.coords.latitude,
+                    lon: position.coords.longitude,
+                };
+
+                const response = await fetch('/share-location', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, location }),
+                });
+
+                const result = await response.json();
+                document.getElementById('output').innerHTML = `<p>${result.message}</p>`;
+            });
+        }
+    </script>
+</body>
+</html>
