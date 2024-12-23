@@ -3,61 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phone Number Tracker</title>
+    <title>Real-Time Location Tracker</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f1f1f1;
-            padding: 20px;
-        }
-        .phone-input {
-            margin-bottom: 20px;
-        }
-        .phone-number {
-            cursor: pointer;
-            color: #007bff;
-            text-decoration: underline;
-        }
-        .location {
-            margin-top: 20px;
+        #map {
+            height: 400px;
+            width: 100%;
         }
     </style>
 </head>
 <body>
-    <h1>Phone Number Tracker</h1>
-    <div>
-        <label for="phoneNumber">Enter a phone number (Example: +358 45 1235666): </label>
-        <input type="text" id="phoneNumber" class="phone-input">
-        <button onclick="trackNumber()">Track</button>
-    </div>
+    <h1>Real-Time Location Tracker</h1>
+    <div id="map"></div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap" async defer></script>
     
-    <div class="location">
-        <p id="locationMessage"></p>
-    </div>
-
     <script>
-        function trackNumber() {
-            var phoneNumber = document.getElementById('phoneNumber').value;
+        // Mock coordinates, you will replace this with actual shared coordinates.
+        // Example: coordinates of the phone (latitude, longitude)
+        const phoneLatitude = 60.1695; // Change to actual latitude
+        const phoneLongitude = 24.9354; // Change to actual longitude
+
+        let map;
+
+        function initMap() {
+            const location = { lat: phoneLatitude, lng: phoneLongitude };
             
-            if (phoneNumber) {
-                // This is a mock location. Replace with actual geolocation API or service for real tracking.
-                const mockLocation = {
-                    lat: 60.1695,   // Mock latitude (Helsinki, Finland)
-                    lng: 24.9354    // Mock longitude (Helsinki, Finland)
-                };
+            // Create a map centered on the location
+            map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 15,
+                center: location,
+            });
 
-                // You can replace this with a real geolocation or tracking API.
-                document.getElementById('locationMessage').innerHTML = `Phone number: <span class="phone-number">${phoneNumber}</span> is located at Latitude: ${mockLocation.lat} and Longitude: ${mockLocation.lng}.`;
-                
-                // Optional: Display a map (mocking this in the future with an actual API).
-                // Example: Using Google Maps API (you will need an API key for real use).
-                // Let me know if you'd like to explore this!
-
-                alert("Mock location coordinates: " + mockLocation.lat + ", " + mockLocation.lng);
-            } else {
-                alert("Please enter a valid phone number!");
-            }
+            // Place a marker at the phone's location
+            const marker = new google.maps.Marker({
+                position: location,
+                map: map,
+                title: "Phone Location",
+            });
         }
+
+        // Mock function to update location, replace with actual data fetching logic
+        function updateLocation() {
+            // Fetch real-time location here (e.g., through location sharing link or API)
+            // After fetching new coordinates, update the map marker position
+
+            const newLat = 60.1700; // Example update (new latitude)
+            const newLng = 24.9360; // Example update (new longitude)
+
+            // Update the marker position on the map
+            const newLocation = { lat: newLat, lng: newLng };
+            map.setCenter(newLocation);
+            map.setZoom(15);
+
+            // Update the marker position
+            const marker = new google.maps.Marker({
+                position: newLocation,
+                map: map,
+                title: "Updated Phone Location",
+            });
+        }
+
+        // Simulate a location update after 5 seconds
+        setTimeout(updateLocation, 5000);
     </script>
 </body>
 </html>
